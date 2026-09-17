@@ -29,8 +29,8 @@ if (totalUnidade <= 0 || isNaN(totalUnidade)) {
 
     // Saída e condição
     if (mediaFinal >= mediaAprovacao) {
-        console.log("Parabéns! Você foi aprovado(a)!");
+        console.log("Aprovado(a)!");
     } else {
-        console.log("Estude mais! Você foi reprovado(a).");
+        console.log("Reprovado(a).");
     }
 }
