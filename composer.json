@@ -1,0 +1,15 @@
+{
+    "name": "elipse/media_escolar",
+    "description": "média escolar",
+    "autoload": {
+        "psr-4": {
+            "Elipse\\MediaEscolar\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ana"
+        }
+    ],
+    "require": {}
+}
