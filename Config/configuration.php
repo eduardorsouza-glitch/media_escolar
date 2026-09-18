@@ -1,7 +1,14 @@
 <?php
 
-define("DB_NAME",     "postgres");
-define("DB_USER",     "postgres.mceyqzdvwduqdilmggoc");
-define("DB_PASSWORD", "ana123sandrine@");
-define("DB_HOST",     "aws-0-ca-central-1.pooler.supabase.com");
-define("DB_PORT",     "6543");
+require_once __DIR__ . "/../vendor/autoload.php";
+
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
+
+define("DB_NAME", $_ENV['DB_NAME']);
+define("DB_USER", $_ENV['DB_USER']);
+define("DB_PASSWORD", $_ENV['DB_PASSWORD']);
+define("DB_HOST", $_ENV['DB_HOST']);
+define("DB_PORT", $_ENV['DB_PORT']);
