@@ -36,7 +36,7 @@ class Boletim
                 'situacao' => $situacao
             ]);
 
-            return (int) $this->conexao->lastInsertId('medias_escolares_id_seq');
+            return (int) $this->conexao->lastInsertId();
 
         } catch (PDOException $e) {
             error_log($e->getMessage());
