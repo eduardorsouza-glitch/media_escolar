@@ -4,6 +4,7 @@ namespace Controller;
 
 use Model\Boletim;
 use Exception;
+use OpenApi\Attributes as OA;
 
 class BoletimController
 {
@@ -30,15 +31,81 @@ class BoletimController
         };
     }
 
-    private function listar(): void
-    {
-        try {
-            http_response_code(200);
-            echo json_encode($this->boletim->listar());
-        } catch (Exception $e) {
-            $this->erro(500, $e->getMessage());
-        }
+    #[OA\Get(
+    path: "/medias",
+    summary: "Lista todas as médias escolares",
+    tags: ["Médias"],
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: "Lista de médias escolares"
+        ),
+        new OA\Response(
+            response: 500,
+            description: "Erro interno"
+        )
+    ]
+)]
+private function listar(): void
+{
+    try {
+        http_response_code(200);
+        echo json_encode($this->boletim->listar());
+    } catch (Exception $e) {
+        $this->erro(500, $e->getMessage());
     }
+}
+    
+    #[OA\Post(
+    path: "/medias",
+    summary: "Cadastra uma nova média escolar",
+    tags: ["Médias"],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: "object",
+            properties: [
+                new OA\Property(
+                    property: "aluno",
+                    type: "string",
+                    example: "Eduardo"
+                ),
+                new OA\Property(
+                    property: "nota1",
+                    type: "number",
+                    format: "float",
+                    example: 8.5
+                ),
+                new OA\Property(
+                    property: "nota2",
+                    type: "number",
+                    format: "float",
+                    example: 7.0
+                ),
+                new OA\Property(
+                    property: "nota3",
+                    type: "number",
+                    format: "float",
+                    example: 9.0
+                )
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(
+            response: 201,
+            description: "Média cadastrada com sucesso"
+        ),
+        new OA\Response(
+            response: 422,
+            description: "Dados inválidos"
+        ),
+        new OA\Response(
+            response: 500,
+            description: "Erro interno"
+        )
+    ]
+)]
 
     private function cadastrar(): void
     {
@@ -69,6 +136,35 @@ class BoletimController
         }
     }
 
+    #[OA\Get(
+    path: "/medias/{id}",
+    summary: "Busca uma média escolar pelo ID",
+    tags: ["Médias"],
+    parameters: [
+        new OA\Parameter(
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID da média escolar",
+            schema: new OA\Schema(type: "integer")
+        )
+    ],
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: "Média encontrada"
+        ),
+        new OA\Response(
+            response: 404,
+            description: "Média não encontrada"
+        ),
+        new OA\Response(
+            response: 500,
+            description: "Erro interno"
+        )
+    ]
+)]
+
     private function exibir(int $id): void
     {
         try {
@@ -85,6 +181,70 @@ class BoletimController
             $this->erro(500, $e->getMessage());
         }
     }
+
+    #[OA\Put(
+    path: "/medias/{id}",
+    summary: "Atualiza uma média escolar",
+    tags: ["Médias"],
+    parameters: [
+        new OA\Parameter(
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID da média escolar",
+            schema: new OA\Schema(type: "integer")
+        )
+    ],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: "object",
+            properties: [
+                new OA\Property(
+                    property: "aluno",
+                    type: "string",
+                    example: "Eduardo"
+                ),
+                new OA\Property(
+                    property: "nota1",
+                    type: "number",
+                    format: "float",
+                    example: 8.5
+                ),
+                new OA\Property(
+                    property: "nota2",
+                    type: "number",
+                    format: "float",
+                    example: 7.0
+                ),
+                new OA\Property(
+                    property: "nota3",
+                    type: "number",
+                    format: "float",
+                    example: 9.0
+                )
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: "Média atualizada com sucesso"
+        ),
+        new OA\Response(
+            response: 404,
+            description: "Média não encontrada"
+        ),
+        new OA\Response(
+            response: 422,
+            description: "Dados inválidos"
+        ),
+        new OA\Response(
+            response: 500,
+            description: "Erro interno"
+        )
+    ]
+)]
 
     private function atualizar(int $id): void
     {
@@ -116,6 +276,35 @@ class BoletimController
             $this->erro(500, $e->getMessage());
         }
     }
+
+    #[OA\Delete(
+    path: "/medias/{id}",
+    summary: "Exclui uma média escolar",
+    tags: ["Médias"],
+    parameters: [
+        new OA\Parameter(
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID da média escolar",
+            schema: new OA\Schema(type: "integer")
+        )
+    ],
+    responses: [
+        new OA\Response(
+            response: 204,
+            description: "Média excluída com sucesso"
+        ),
+        new OA\Response(
+            response: 404,
+            description: "Média não encontrada"
+        ),
+        new OA\Response(
+            response: 500,
+            description: "Erro interno"
+        )
+    ]
+)]
 
     private function excluir(int $id): void
     {

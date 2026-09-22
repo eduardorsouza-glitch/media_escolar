@@ -4,5 +4,202 @@
         "title": "API de Média Escolar",
         "description": "API REST para cadastro e gerenciamento de médias escolares.",
         "version": "1.0.0"
-    }
+    },
+    "paths": {
+        "/medias": {
+            "get": {
+                "tags": [
+                    "Médias"
+                ],
+                "summary": "Lista todas as médias escolares",
+                "operationId": "77c05901190ed431fa71f077be928fab",
+                "responses": {
+                    "200": {
+                        "description": "Lista de médias escolares"
+                    },
+                    "500": {
+                        "description": "Erro interno"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Médias"
+                ],
+                "summary": "Cadastra uma nova média escolar",
+                "operationId": "4045ff4d1c419c88c5e57a7256359834",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "aluno": {
+                                        "type": "string",
+                                        "example": "Eduardo"
+                                    },
+                                    "nota1": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 8.5
+                                    },
+                                    "nota2": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 7
+                                    },
+                                    "nota3": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 9
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Média cadastrada com sucesso"
+                    },
+                    "422": {
+                        "description": "Dados inválidos"
+                    },
+                    "500": {
+                        "description": "Erro interno"
+                    }
+                }
+            }
+        },
+        "/medias/{id}": {
+            "get": {
+                "tags": [
+                    "Médias"
+                ],
+                "summary": "Busca uma média escolar pelo ID",
+                "operationId": "de04f4121450d98f98529dd64c4c7141",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da média escolar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Média encontrada"
+                    },
+                    "404": {
+                        "description": "Média não encontrada"
+                    },
+                    "500": {
+                        "description": "Erro interno"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Médias"
+                ],
+                "summary": "Atualiza uma média escolar",
+                "operationId": "76ac7b0da14d19e38637091616ef61c0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da média escolar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "aluno": {
+                                        "type": "string",
+                                        "example": "Eduardo"
+                                    },
+                                    "nota1": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 8.5
+                                    },
+                                    "nota2": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 7
+                                    },
+                                    "nota3": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 9
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Média atualizada com sucesso"
+                    },
+                    "404": {
+                        "description": "Média não encontrada"
+                    },
+                    "422": {
+                        "description": "Dados inválidos"
+                    },
+                    "500": {
+                        "description": "Erro interno"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Médias"
+                ],
+                "summary": "Exclui uma média escolar",
+                "operationId": "d546023af6fc94a87e00a3295ea90f97",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da média escolar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Média excluída com sucesso"
+                    },
+                    "404": {
+                        "description": "Média não encontrada"
+                    },
+                    "500": {
+                        "description": "Erro interno"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Médias",
+            "description": "Médias"
+        }
+    ]
 }
