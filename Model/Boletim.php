@@ -1,111 +1,111 @@
-```php
 <?php
 
-require_once __DIR__ . '/Connection.php';
+namespace Model;
+
+use Exception;
+use Model\Connection;
+use PDO;
+use PDOException;
 
 class Boletim
 {
-    public static function listar()
+    private PDO $conexao;
+
+    public function __construct()
     {
-        $db = Connection::getConnection();
-
-        $sql = "SELECT * FROM boletins ORDER BY id";
-        $result = pg_query($db, $sql);
-
-        return pg_fetch_all($result) ?: [];
+        $this->conexao = Connection::getInstance();
     }
 
-    public static function cadastrar()
+    public function cadastrar(string $aluno, float $nota1, float $nota2, float $nota3): int
     {
-        $dados = json_decode(file_get_contents("php://input"), true);
+        try {
+            $media = ($nota1 + $nota2 + $nota3) / 3;
+            $situacao = $media >= 7 ? 'Aprovado' : 'Reprovado';
 
-        $aluno = $dados['aluno'];
-        $disciplina = $dados['disciplina'];
-        $nota1 = $dados['nota1'];
-        $nota2 = $dados['nota2'];
-        $nota3 = $dados['nota3'];
+            $comando = $this->conexao->prepare(
+                "INSERT INTO medias_escolares (aluno, nota1, nota2, nota3, media, situacao)
+                 VALUES (:aluno, :nota1, :nota2, :nota3, :media, :situacao)"
+            );
 
-        $media = ($nota1 + $nota2 + $nota3) / 3;
-        $situacao = $media >= 7 ? 'Aprovado' : 'Reprovado';
+            $comando->execute([
+                'aluno' => $aluno,
+                'nota1' => $nota1,
+                'nota2' => $nota2,
+                'nota3' => $nota3,
+                'media' => $media,
+                'situacao' => $situacao
+            ]);
 
-        $db = Connection::getConnection();
+            return (int) $this->conexao->lastInsertId('medias_escolares_id_seq');
 
-        $sql = "INSERT INTO boletins
-                (aluno, disciplina, nota1, nota2, nota3, media, situacao)
-                VALUES ($1, $2, $3, $4, $5, $6, $7)
-                RETURNING *";
-
-        $result = pg_query_params($db, $sql, [
-            $aluno,
-            $disciplina,
-            $nota1,
-            $nota2,
-            $nota3,
-            $media,
-            $situacao
-        ]);
-
-        return pg_fetch_assoc($result);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            throw new Exception("Erro ao cadastrar média escolar");
+        }
     }
 
-    public static function buscar($id)
+    public function buscar(int $id): ?array
     {
-        $db = Connection::getConnection();
+        try {
+            $comando = $this->conexao->prepare("SELECT * FROM medias_escolares WHERE id = :id");
+            $comando->execute(['id' => $id]);
 
-        $result = pg_query_params(
-            $db,
-            "SELECT * FROM boletins WHERE id = $1",
-            [$id]
-        );
+            return $comando->fetch(PDO::FETCH_ASSOC) ?: null;
 
-        return pg_fetch_assoc($result);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            throw new Exception("Erro ao buscar média escolar");
+        }
     }
 
-    public static function atualizar($id)
+    public function listar(): array
     {
-        $dados = json_decode(file_get_contents("php://input"), true);
-
-        $nota1 = $dados['nota1'];
-        $nota2 = $dados['nota2'];
-        $nota3 = $dados['nota3'];
-
-        $media = ($nota1 + $nota2 + $nota3) / 3;
-        $situacao = $media >= 7 ? 'Aprovado' : 'Reprovado';
-
-        $db = Connection::getConnection();
-
-        $sql = "UPDATE boletins
-                SET nota1 = $1,
-                    nota2 = $2,
-                    nota3 = $3,
-                    media = $4,
-                    situacao = $5
-                WHERE id = $6
-                RETURNING *";
-
-        $result = pg_query_params($db, $sql, [
-            $nota1,
-            $nota2,
-            $nota3,
-            $media,
-            $situacao,
-            $id
-        ]);
-
-        return pg_fetch_assoc($result);
+        try {
+            return $this->conexao->query("SELECT * FROM medias_escolares ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            throw new Exception("Erro ao listar médias escolares");
+        }
     }
 
-    public static function excluir($id)
+    public function atualizar(int $id, float $nota1, float $nota2, float $nota3): bool
     {
-        $db = Connection::getConnection();
+        try {
+            $media = ($nota1 + $nota2 + $nota3) / 3;
+            $situacao = $media >= 7 ? 'Aprovado' : 'Reprovado';
 
-        $result = pg_query_params(
-            $db,
-            "DELETE FROM boletins WHERE id = $1",
-            [$id]
-        );
+            $comando = $this->conexao->prepare(
+                "UPDATE medias_escolares
+                 SET nota1 = :nota1, nota2 = :nota2, nota3 = :nota3, media = :media, situacao = :situacao
+                 WHERE id = :id"
+            );
 
-        return ['mensagem' => 'Boletim excluído com sucesso'];
+            return $comando->execute([
+                'nota1' => $nota1,
+                'nota2' => $nota2,
+                'nota3' => $nota3,
+                'media' => $media,
+                'situacao' => $situacao,
+                'id' => $id
+            ]);
+
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            throw new Exception("Erro ao atualizar média escolar");
+        }
+    }
+
+    public function excluir(int $id): bool
+    {
+        try {
+            $comando = $this->conexao->prepare("DELETE FROM medias_escolares WHERE id = :id");
+            $comando->execute(['id' => $id]);
+
+            return $comando->rowCount() > 0;
+
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            throw new Exception("Erro ao excluir média escolar");
+        }
     }
 }
-```

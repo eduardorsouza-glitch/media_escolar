@@ -1,42 +1,29 @@
-```php
 <?php
 
-require_once __DIR__ . '/Controller/BoletimController.php';
+require_once "vendor/autoload.php";
 
-$controller = new BoletimController();
+use Model\Boletim;
+use Controller\BoletimController;
 
-$method = $_SERVER['REQUEST_METHOD'];
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$caminho = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$partes = explode("/", $caminho);
 
-$uri = explode('/', trim($uri, '/'));
+$recurso = $partes[2] ?? null;
+$id = $partes[3] ?? null;
 
-$id = $uri[1] ?? null;
+header("Content-Type: application/json; charset=UTF-8");
 
-header('Content-Type: application/json');
-
-switch ($method) {
-    case 'GET':
-        $resultado = $id
-            ? $controller->show($id)
-            : $controller->index();
-        break;
-
-    case 'POST':
-        $resultado = $controller->store();
-        break;
-
-    case 'PUT':
-        $resultado = $controller->update($id);
-        break;
-
-    case 'DELETE':
-        $resultado = $controller->delete($id);
-        break;
-
-    default:
-        $resultado = ['erro' => 'Método não permitido'];
-        break;
+if ($recurso !== "medias") {
+    http_response_code(404);
+    echo json_encode(["error" => "Rota desconhecida!"]);
+    exit;
 }
 
-echo json_encode($resultado);
-```
+try {
+    $controller = new BoletimController(new Boletim());
+    $controller->tratarRequisicao($_SERVER['REQUEST_METHOD'], $id);
+} catch (\Throwable $e) {
+    error_log($e->getMessage());
+    http_response_code(500);
+    echo json_encode(["error" => "Erro interno."]);
+}
