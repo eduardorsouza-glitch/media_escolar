@@ -1,0 +1,8 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Média Escolar",
+        "description": "API REST para cadastro e gerenciamento de médias escolares.",
+        "version": "1.0.0"
+    }
+}

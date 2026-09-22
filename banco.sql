@@ -1,3 +1,6 @@
+create database if not exists media_escolar;
+use media_escolar; 
+
 CREATE TABLE medias_escolares (
     id INT AUTO_INCREMENT PRIMARY KEY,
     aluno VARCHAR(100) NOT NULL,
